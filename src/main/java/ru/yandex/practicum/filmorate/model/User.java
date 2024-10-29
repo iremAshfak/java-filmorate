@@ -4,20 +4,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 /**
- * Film.
+ * User.
  */
 
 @Slf4j
 @Data
 @Builder
-public class Film {
+public class User {
     protected int id;
+    protected String email;
+    protected String login;
     protected String name;
-    protected String description;
-    protected LocalDate releaseDate;
-    protected Integer duration;
+    protected LocalDate birthday;
 }
