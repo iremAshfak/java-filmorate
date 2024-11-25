@@ -14,7 +14,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    public static Integer COUNT = 10;
     private final FilmService filmService;
 
     @Autowired
@@ -32,9 +31,13 @@ public class FilmController {
         return filmService.getById(id);
     }
 
-    @GetMapping("/popular")
-    public List<Film> getBestFilms(@RequestParam(required = false) Integer count) {
-        return filmService.getBestFilms((count == null || count == 0) ? COUNT : count);
+    @GetMapping("/popular?count={count}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<Film> getBestFilms(@RequestParam Integer count) {
+        if (count == null || count == 0) {
+            count = 10;
+        }
+        return filmService.getBestFilms(count);
     }
 
     @PostMapping
@@ -49,7 +52,8 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public Film
+    addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         return filmService.addLike(id, userId);
     }
 
