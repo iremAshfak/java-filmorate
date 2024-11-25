@@ -41,7 +41,7 @@ public class FilmService {
         if (filmStorage.getById(filmId) == null) {
             throw new NotFoundException("Фильм не найден");
         }
-        if (filmStorage.getById(userId) == null) {
+        if (userService.getById(userId) == null) {
             throw new NotFoundException("Пользователь не найден");
         }
 
@@ -53,7 +53,7 @@ public class FilmService {
         if (filmStorage.getById(filmId) == null) {
             throw new NotFoundException("Фильм не найден");
         }
-        if (filmStorage.getById(userId) == null) {
+        if (userService.getById(userId) == null) {
             throw new NotFoundException("Пользователь не найден");
         }
 
