@@ -13,6 +13,6 @@ public interface UserStorage {
     User updateUser(User newUser);
 
     void deleteUser(Integer id);
-    
+
     User getById(Integer id);
 }
