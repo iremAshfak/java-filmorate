@@ -31,8 +31,7 @@ public class FilmController {
         return filmService.getById(id);
     }
 
-    @GetMapping("/popular?count={count}")
-    @ResponseStatus(HttpStatus.CREATED)
+    @GetMapping("/popular")
     public List<Film> getBestFilms(@RequestParam Integer count) {
         if (count == null || count == 0) {
             count = 10;
@@ -52,8 +51,7 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public Film
-    addLike(@PathVariable Integer id, @PathVariable Integer userId) {
+    public Film addLike(@PathVariable Integer id, @PathVariable Integer userId) {
         return filmService.addLike(id, userId);
     }
 
