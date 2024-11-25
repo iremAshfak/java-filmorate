@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    public static int COUNT = 10;
+    public static Integer COUNT = 10;
     private final FilmService filmService;
 
     @Autowired
