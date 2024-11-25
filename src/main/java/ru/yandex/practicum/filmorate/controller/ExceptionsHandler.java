@@ -17,7 +17,7 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleValidation(ValidationException e) {
-        return new ErrorResponse("v");
+        return new ErrorResponse("Некорректный объект");
     }
 
     @ExceptionHandler
@@ -29,7 +29,7 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(NotFoundException e) {
-        return new ErrorResponse("not found");
+        return new ErrorResponse("Объект не найден");
     }
 
     @ExceptionHandler
