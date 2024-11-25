@@ -32,7 +32,7 @@ public class FilmController {
         return filmService.getById(id);
     }
 
-    @GetMapping("/popular")
+    @GetMapping("/popular?count={count}")
     public List<Film> getBestFilms(@RequestParam(required = false) Integer count) {
         return filmService.getBestFilms((count == null || count == 0) ? COUNT : count);
     }
