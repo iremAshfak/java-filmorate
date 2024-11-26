@@ -10,8 +10,8 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 @SpringBootTest
@@ -23,32 +23,32 @@ public class UserControllerTest {
     @Test
     void validateUserOk() {
         User user = User.builder()
-                .id(1)
+                .id(1L)
                 .email("irem.ashfak@mail.ru")
                 .login("ashhirka")
                 .birthday(LocalDate.parse("05.03.2002", formatter))
                 .build();
 
-        assertDoesNotThrow(() -> userController.addUser(user), "Пользователь не создан");
+        assertDoesNotThrow(() -> userController.create(user), "Пользователь не создан");
     }
 
     @Test
     void validateUserFail() {
         User user = User.builder()
-                .id(1)
+                .id(1L)
                 .email("irem.ashfak@mail.ru")
                 .login("irem ashfak")
                 .birthday(LocalDate.parse("05.03.2002", formatter))
                 .build();
 
-        Exception exception = assertThrows(ValidationException.class, () -> userController.addUser(user));
+        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
         assertTrue(exception.getMessage().contains("Логин не может быть пустым и содержать пробелы"));
 
         user.setLogin("ashhirka");
         LocalDate wrongBirthday = LocalDate.parse("05.03.2025", formatter);
         user.setBirthday(wrongBirthday);
 
-        exception = assertThrows(ValidationException.class, () -> userController.addUser(user));
+        exception = assertThrows(ValidationException.class, () -> userController.create(user));
         assertTrue(exception.getMessage().contains("Дата рождения не может быть в будущем"));
     }
 }
