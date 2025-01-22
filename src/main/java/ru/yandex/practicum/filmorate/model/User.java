@@ -2,21 +2,20 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * User.
  */
-
-@Slf4j
 @Data
 @Builder
 public class User {
-    protected int id;
-    protected String email;
-    protected String login;
-    protected String name;
-    protected LocalDate birthday;
+    private Long id;
+    private String email;
+    private String login;
+    private String name;
+    private LocalDate birthday;
+    private Set<Long> friends;
 }

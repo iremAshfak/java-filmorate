@@ -2,21 +2,24 @@ package ru.yandex.practicum.filmorate.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
  */
-
-@Slf4j
 @Data
 @Builder
 public class Film {
-    protected int id;
-    protected String name;
-    protected String description;
-    protected LocalDate releaseDate;
-    protected Integer duration;
+    private Long id;
+    private String name;
+    private String description;
+    private LocalDate releaseDate;
+    private int duration;
+    private Set<Long> likesUsers;
+
+    public int getLikesUsersSize() {
+        return likesUsers.size();
+    }
 }
