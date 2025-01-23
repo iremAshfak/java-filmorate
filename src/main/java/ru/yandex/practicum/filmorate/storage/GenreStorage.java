@@ -11,5 +11,4 @@ public interface GenreStorage {
     Genre readById(Long id);
 
     Set<Genre> getGenresByFilmID(Long filmId);
-
 }
