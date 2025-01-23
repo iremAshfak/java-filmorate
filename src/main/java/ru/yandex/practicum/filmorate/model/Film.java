@@ -4,6 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -19,7 +22,17 @@ public class Film {
     private int duration;
     private Set<Long> likesUsers;
 
-    public int getLikesUsersSize() {
-        return likesUsers.size();
+    Set<Long> likes = new HashSet<>();
+    Set<Genre> genres = new HashSet<>();
+    Mpa mpa;
+
+    public Map<String, Object> filmToMap() {
+        Map<String, Object> temp = new HashMap<>();
+        temp.put("name", name);
+        temp.put("description", description);
+        temp.put("releaseDate", releaseDate);
+        temp.put("duration", duration);
+        temp.put("mpaid", mpa.getId());
+        return temp;
     }
 }

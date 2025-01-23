@@ -27,6 +27,6 @@ public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final RuntimeException e) {
-        return new ErrorResponse("Возникло исколючение");
+        return new ErrorResponse("Возникло исключение");
     }
 }

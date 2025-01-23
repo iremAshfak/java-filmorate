@@ -1,54 +1,64 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
-@SpringBootTest
 public class UserControllerTest {
-    @Autowired
-    private UserController userController;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     @Test
-    void validateUserOk() {
+    void shouldSave() {
         User user = User.builder()
-                .id(1L)
-                .email("irem.ashfak@mail.ru")
-                .login("ashhirka")
-                .birthday(LocalDate.parse("05.03.2002", formatter))
+                .email("testOne@mail.ru")
+                .login("loginTestOne")
+                .name("NameTestOne")
+                .birthday(LocalDate.of(1999, 7, 4))
                 .build();
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(filmStorage, userStorage);
+        UserController userController = new UserController(userService);
+        UserDto saveUser = userController.create(user);
 
-        assertDoesNotThrow(() -> userController.create(user), "Пользователь не создан");
+        assertEquals(UserMapper.mapToUserDto(user), saveUser);
     }
 
     @Test
-    void validateUserFail() {
+    void shouldUpdate() {
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        UserService userService = new UserService(filmStorage, userStorage);
+        UserController userController = new UserController(userService);
         User user = User.builder()
-                .id(1L)
-                .email("irem.ashfak@mail.ru")
-                .login("irem ashfak")
-                .birthday(LocalDate.parse("05.03.2002", formatter))
+                .email("testTwo@mail.ru")
+                .login("loginTestTwo")
+                .name("NameTestTwo")
+                .birthday(LocalDate.of(2000, 7, 5))
+                .build();
+        User userNew = User.builder()
+                .email("testTwoNew@mail.ru")
+                .login("loginTestTwoNew")
+                .name("NameTestTwoNew")
+                .birthday(LocalDate.of(2001, 8, 6))
                 .build();
 
-        Exception exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertTrue(exception.getMessage().contains("Логин не может быть пустым и содержать пробелы"));
+        UserDto saveUser = userController.create(user);
+        Long idUser = saveUser.getId();
+        userNew.setId(idUser);
+        UserDto updateUser = userController.update(userNew);
 
-        user.setLogin("ashhirka");
-        LocalDate wrongBirthday = LocalDate.parse("05.03.2025", formatter);
-        user.setBirthday(wrongBirthday);
-
-        exception = assertThrows(ValidationException.class, () -> userController.create(user));
-        assertTrue(exception.getMessage().contains("Дата рождения не может быть в будущем"));
+        assertNotEquals(saveUser, updateUser);
     }
 }
