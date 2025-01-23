@@ -16,7 +16,7 @@ public class MpaService {
     private final MpaStorage mpaStorage;
 
     @Autowired
-    public MpaService (MpaStorage mpaStorage) {
+    public MpaService(MpaStorage mpaStorage) {
         this.mpaStorage = mpaStorage;
     }
 
