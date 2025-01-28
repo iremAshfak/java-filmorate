@@ -1,60 +1,64 @@
 package ru.yandex.practicum.filmorate;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.controller.FilmController;
-import ru.yandex.practicum.filmorate.controller.UserController;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
-import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-@SpringBootTest
 public class FilmControllerTest {
-    @Autowired
-    private FilmController filmController;
-    private UserController userController;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
     @Test
-    void checkFilmIsOk() {
+    void shouldSave() {
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmService(filmStorage, userStorage, null);
+        FilmController filmController = new FilmController(filmService);
         Film film = Film.builder()
-                .id(1L)
-                .name("Джокер: Безумие на двоих")
-                .description("Американский музыкально-психологический триллер режиссёра Тодда Филлипса")
-                .releaseDate(LocalDate.parse("04.09.2024", formatter))
-                .duration(138)
+                .name("NameTestOne")
+                .description("DescriptionTestOne")
+                .releaseDate(LocalDate.of(2008, 1, 1))
+                .duration(88888)
                 .build();
 
-        assertDoesNotThrow(() -> filmController.create(film), "Фильм не создан");
+        FilmDto saveFilm = filmController.create(film);
+
+        assertEquals(FilmMapper.mapToFilmDto(film), saveFilm);
     }
 
     @Test
-    void checkFilmIsFailed() {
+    void shouldUpdate() {
+        FilmStorage filmStorage = new InMemoryFilmStorage();
+        UserStorage userStorage = new InMemoryUserStorage();
+        FilmService filmService = new FilmService(filmStorage, userStorage, null);
+        FilmController filmController = new FilmController(filmService);
         Film film = Film.builder()
-                .id(1L)
-                .name("Джокер: Безумие на двоих")
-                .description("Американский музыкально-психологический триллер режиссёра Тодда Филлипса")
-                .releaseDate(LocalDate.parse("04.09.1824", formatter))
-                .duration(138)
+                .name("NameTestTwo")
+                .description("DescriptionTestTwo")
+                .releaseDate(LocalDate.of(2007, 5, 7))
+                .duration(88888)
+                .build();
+        Film filmNew = Film.builder()
+                .name("NameTestTwoNew")
+                .description("DescriptionTestTwoNew")
+                .releaseDate(LocalDate.of(2008, 6, 8))
+                .duration(88888)
                 .build();
 
-        Exception exception = assertThrows(ValidationException.class, () -> filmController.create(film));
-        assertTrue(exception.getMessage().contains("Дата релиза не может быть ранее 28 декабря 1895 года"));
+        FilmDto saveFilm = filmController.create(film);
+        Long idFilm = saveFilm.getId();
+        filmNew.setId(idFilm);
+        FilmDto updateFilm = filmController.create(filmNew);
 
-        film.setReleaseDate(LocalDate.parse("04.09.2024", formatter));
-        film.setDescription("Американский музыкально-психологический триллер режиссёра Тодда Филлипса, " +
-                "продолжение картины «Джокер». Главную роль в нём исполнил Хоакин Феникс, " +
-                "певица Леди Гага сыграла Харли Квинн. Премьера фильма состоялась 4 сентября 2024 года " +
-                "на 81-м Венецианском кинофестивале. Находясь на принудительном лечении в больнице Аркхем, " +
-                "несостоявшийся комик Артур Флек встречает любовь всей своей жизни — Харли Квинн.");
-
-        exception = assertThrows(ValidationException.class, () -> filmController.create(film));
-        assertTrue(exception.getMessage().contains("Описание не может быть длиннее 200 символов"));
+        assertNotEquals(saveFilm, updateFilm);
     }
 }

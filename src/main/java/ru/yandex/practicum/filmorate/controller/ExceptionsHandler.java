@@ -23,10 +23,4 @@ public class ExceptionsHandler {
     public ErrorResponse handleNotFoundException(final NotFoundException e) {
         return new ErrorResponse("Объект не найден");
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleRuntimeException(final RuntimeException e) {
-        return new ErrorResponse("Возникло исколючение");
-    }
 }
