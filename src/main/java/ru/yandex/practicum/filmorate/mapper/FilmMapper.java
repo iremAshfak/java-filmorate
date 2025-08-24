@@ -2,27 +2,35 @@ package ru.yandex.practicum.filmorate.mapper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
 import ru.yandex.practicum.filmorate.model.Film;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class FilmMapper {
-    public static FilmDto mapToFilmDto(Film film) {
-        if (film == null) {
-            return null;
-        }
-
-        FilmDto dto = FilmDto.builder()
-                .id(film.getId())
-                .name(film.getName())
-                .description(film.getDescription())
-                .releaseDate(film.getReleaseDate())
-                .duration(film.getDuration())
-                .likes(film.getLikes())
-                .genres(film.getGenres())
-                .mpa(film.getMpa())
+public class FilmMapper {
+    public static Film toModel(FilmDTO filmDTO) {
+        return Film.builder()
+                .id(filmDTO.getId())
+                .name(filmDTO.getName())
+                .description(filmDTO.getDescription())
+                .releaseDate(filmDTO.getReleaseDate())
+                .duration(filmDTO.getDuration())
+                .mpa(filmDTO.getMpa())
+                .genres(filmDTO.getGenres())
+                .directors(filmDTO.getDirectors())
                 .build();
+    }
 
-        return dto;
+    public static FilmDTO toDto(Film film) {
+        FilmDTO filmDTO = new FilmDTO();
+        filmDTO.setId(film.getId());
+        filmDTO.setName(film.getName());
+        filmDTO.setDescription(film.getDescription());
+        filmDTO.setReleaseDate(film.getReleaseDate());
+        filmDTO.setDuration(film.getDuration());
+        filmDTO.setMpa(film.getMpa());
+        filmDTO.setGenres(film.getGenres());
+        filmDTO.setDirectors(film.getDirectors());
+
+        return filmDTO;
     }
 }

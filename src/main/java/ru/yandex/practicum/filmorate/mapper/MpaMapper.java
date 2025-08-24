@@ -1,23 +1,16 @@
 package ru.yandex.practicum.filmorate.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
-import ru.yandex.practicum.filmorate.dto.MpaDto;
+import ru.yandex.practicum.filmorate.dto.MpaDTO;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class MpaMapper {
-    public static MpaDto mapToMpaDto(Mpa mpa) {
-        if (mpa == null) {
-            return null;
-        }
+public class MpaMapper {
+    public static Mpa toModel(MpaDTO mpaDTO) {
+        Mpa mpa = new Mpa(mpaDTO.getId(), mpaDTO.getName());
+        return mpa;
+    }
 
-        MpaDto dto = MpaDto.builder()
-                .id(mpa.getId())
-                .name(mpa.getName())
-                .build();
-
-        return dto;
+    public static MpaDTO toDTO(Mpa mpa) {
+        MpaDTO mpaDTO = new MpaDTO(mpa.getId(), mpa.getName());
+        return mpaDTO;
     }
 }

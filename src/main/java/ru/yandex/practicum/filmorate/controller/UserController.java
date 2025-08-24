@@ -1,67 +1,84 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.dto.UserDto;
-import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dto.EventDTO;
+import ru.yandex.practicum.filmorate.dto.FilmDTO;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.Collection;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final FeedService feedService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FeedService feedService) {
         this.userService = userService;
-    }
-
-    @GetMapping
-    public List<UserDto> findAll() {
-        return userService.findAllUsers();
-    }
-
-    @GetMapping("{userId}")
-    public UserDto getUserById(@PathVariable Long userId) {
-        return userService.findUserByID(userId);
+        this.feedService = feedService;
     }
 
     @PostMapping
-    public UserDto create(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDTO create(@Valid @RequestBody UserDTO userDto) {
+        return userService.create(userDto);
+    }
+
+    @GetMapping("/{userId}")
+    public UserDTO getUserById(@PathVariable Long userId) {
+        return userService.getUserById(userId);
+    }
+
+    @GetMapping
+    public List<UserDTO> findAll() {
+        return userService.findAll();
     }
 
     @PutMapping
-    public UserDto update(@RequestBody User newUser) {
-        return userService.updateUser(newUser);
+    public UserDTO update(@RequestBody UserDTO userDto) {
+        return userService.update(userDto);
     }
 
-    @PutMapping("{id}/friends/{friendId}")
-    public ResponseEntity<?> addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+    @DeleteMapping("/{userId}")
+    public void remove(@PathVariable(name = "userId") Long id) {
+        userService.remove(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}/friends/{friendId}")
-    public ResponseEntity<?> deleteFriend(@PathVariable Long id, @PathVariable Long friendId) {
-        userService.deleteFriendById(id, friendId);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.removeFriend(id, friendId);
     }
 
-    @GetMapping("{id}/friends")
-    public ResponseEntity<Collection<UserDto>> readAllFriendsByUserId(@PathVariable Long id) {
-        return new ResponseEntity<>(userService.readAllFriendsByUserId(id), HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}/friends")
+    public List<UserDTO> getFriends(@PathVariable Long id) {
+        return userService.getFriends(id);
     }
 
-    @GetMapping("{id}/friends/common/{otherId}")
-    public ResponseEntity<Collection<UserDto>> readAllCommonFriends(@PathVariable Long id, @PathVariable Long otherId) {
-        return new ResponseEntity<>(userService.readAllCommonFriends(id, otherId), HttpStatus.OK);
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<UserDTO> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.getMutualFriends(id, otherId);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<FilmDTO> getRecommendations(@PathVariable Long id) {
+        return userService.getRecommendations(id);
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @GetMapping("/{id}/feed")
+    public List<EventDTO> readEventFeedForUser(@PathVariable("id") long userId) {
+        return feedService.readEventFeedForUser(userId);
     }
 }

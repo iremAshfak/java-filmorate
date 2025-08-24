@@ -1,32 +1,49 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 @Data
 @Builder
-@AllArgsConstructor
 public class User {
-    Long id;
-    String email;
-    String login;
-    String name;
-    LocalDate birthday;
+    @Builder.Default
+    private Long id = Long.valueOf(0);
+    @Builder.Default
+    private String email = "Default email";
+    @Builder.Default
+    private String login = "Default login";
+    @Builder.Default
+    private String name = "Default name";
+    @Builder.Default
+    private LocalDate birthday = LocalDate.of(2000, 12, 01);
+    @Builder.Default
     private Set<Long> friends = new HashSet<>();
 
-    public Map<String, Object> userToMap() {
-        Map<String, Object> temp = new HashMap<>();
-        temp.put("email", email);
-        temp.put("login", login);
-        temp.put("name", name);
-        temp.put("birthday", birthday);
-        return temp;
+    public void setToFriends(Long id) {
+        friends.add(id);
+    }
+
+    public void removeFromFriends(Long id) {
+        friends.remove(id);
+    }
+
+    public boolean isFriend(Long id) {
+        return friends.contains(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", login='" + login + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", friends=" + friends +
+                '}';
     }
 }

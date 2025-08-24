@@ -1,11 +1,17 @@
 package ru.yandex.practicum.filmorate.dto;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-public class MpaDto {
-    Long id;
-    String name;
+public class MpaDTO {
+    private Long id;
+    private String name;
+
+    public MpaDTO() {
+    }
+
+    public MpaDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }
