@@ -50,6 +50,8 @@
 |  | POST | `/films` | Добавить новый фильм |
 |  | PUT | `/films` | Обновить фильм |
 |  | DELETE | `/films/{id}` | Удалить фильм |
+|  | PUT | /films/{id}/like/{userId} | Поставить лайк |
+|  | DELETE | /films/{id}/like/{userId} | Удалить лайк |
 | **Пользователи** | GET | `/users` | Получить список пользователей |
 |  | GET | `/users/{id}` | Получить пользователя по ID |
 |  | GET | `/users/{id}/feed` | Получение ленты событий пользователя |
@@ -70,7 +72,7 @@
 |  | DELETE | `/reviews/{id}/like/{userId}` | Удалить лайк |
 |  | DELETE | `/reviews/{id}/dislike/{userId}` | Удалить дизлайк |
 | **Рекомендации** | GET | `/users/{id}/recommendations` | Получить персональные рекомендации фильмов |
-| **Режиссёры** |  | GET | `/films/director/{directorId}?sortBy=[year,likes]` | Получить список фильмов режиссера, отсортированных по количеству лайков или году выпуска |
+| **Режиссёры** | GET | `/films/director/{directorId}?sortBy=[year,likes]` | Получить список фильмов режиссера, отсортированных по количеству лайков или году выпуска |
 |  | GET | `directors` | Получить список всех режиссёров |
 |  | GET | `/directors/{id}` | Получить режиссёра по ID |
 |  | POST | `/directors` | Создать режиссёра |
