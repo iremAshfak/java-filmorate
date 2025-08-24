@@ -1,25 +1,26 @@
 package ru.yandex.practicum.filmorate.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.dto.UserDTO;
 import ru.yandex.practicum.filmorate.model.User;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class UserMapper {
-    public static UserDto mapToUserDto(User user) {
-        if (user == null) {
-            return null;
-        }
-
-        UserDto dto = UserDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .login(user.getLogin())
-                .name(user.getName())
-                .birthday(user.getBirthday())
+public class UserMapper {
+    public static User toModel(UserDTO userDTO) {
+        return User.builder()
+                .id(userDTO.getId())
+                .email(userDTO.getEmail())
+                .login(userDTO.getLogin())
+                .name(userDTO.getName())
+                .birthday(userDTO.getBirthday())
                 .build();
+    }
 
-        return dto;
+    public static UserDTO toDto(User model) {
+        UserDTO userDTO = new UserDTO();
+        userDTO.setId(model.getId());
+        userDTO.setEmail(model.getEmail());
+        userDTO.setLogin(model.getLogin());
+        userDTO.setName(model.getName());
+        userDTO.setBirthday(model.getBirthday());
+        return userDTO;
     }
 }

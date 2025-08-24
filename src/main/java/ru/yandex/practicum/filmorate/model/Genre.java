@@ -1,13 +1,25 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
-@AllArgsConstructor
 public class Genre {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
+
+    public Genre() {
+    }
+
+    public Genre(Long id) {
+        this.id = id;
+    }
+
+    public Genre(String id) {
+        this.id = Long.parseLong(id);
+    }
+
+    public Genre(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

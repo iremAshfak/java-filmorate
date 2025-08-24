@@ -1,38 +1,66 @@
 package ru.yandex.practicum.filmorate.model;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 
-/**
- * Film.
- */
 @Data
 @Builder
-public class Film {
-    private Long id;
-    private String name;
-    private String description;
-    private LocalDate releaseDate;
-    private int duration;
-    private Set<Long> likesUsers;
+public class Film implements Comparable<Film> {
+    @Builder.Default
+    private Long id = Long.valueOf(0);
+    @Builder.Default
+    private String name = "Default name";
+    @Builder.Default
+    private String description = "Default description";
+    @NotNull
+    @Builder.Default
+    private LocalDate releaseDate = LocalDate.of(2000, 12, 28);
+    @Builder.Default
+    private Long duration = Long.valueOf(110);
+    @Builder.Default
+    private Mpa mpa = new Mpa(1L);
+    @Builder.Default
+    private List<Genre> genres = new ArrayList<>();
+    @Builder.Default
+    private List<Director> directors = new ArrayList<>();
+    @Builder.Default
+    private Set<Long> likes = new HashSet<>();
 
-    Set<Long> likes = new HashSet<>();
-    Set<Genre> genres = new HashSet<>();
-    Mpa mpa;
+    public void addLike(Long userId) {
+        likes.add(userId);
+    }
 
-    public Map<String, Object> filmToMap() {
-        Map<String, Object> temp = new HashMap<>();
-        temp.put("name", name);
-        temp.put("description", description);
-        temp.put("releaseDate", releaseDate);
-        temp.put("duration", duration);
-        temp.put("mpaid", mpa.getId());
-        return temp;
+    public void removeLike(Long userId) {
+        likes.remove(userId);
+    }
+
+    public List<Genre> getGenres() {
+        return genres;
+    }
+
+    public void setGenres(List<Genre> genres) {
+        this.genres = genres;
+    }
+
+    @Override
+    public String toString() {
+        return "Film{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", releaseDate=" + releaseDate +
+                ", duration=" + duration +
+                '}';
+    }
+
+    public int compareTo(Film obj) {
+        return obj.getLikes().size() - this.getLikes().size();
     }
 }

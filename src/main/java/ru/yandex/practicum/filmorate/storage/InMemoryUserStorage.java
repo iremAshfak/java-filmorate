@@ -1,111 +1,94 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.controller.UserController;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-@Slf4j
-@Component
+@Component("InMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
+    private static final Logger log = LoggerFactory.getLogger(UserController.class);
     private final Map<Long, User> users = new HashMap<>();
 
     @Override
-    public Collection<User> findAllUsers() {
-        log.info("Request to get Users");
-        return users.values();
-    }
-
-    @Override
-    public User createUser(@RequestBody User user) {
-        log.info("Request to create User by login {}", user.getLogin());
-        // проверяем выполнение необходимых условий
-        validation(user);
-        // формируем дополнительные данные
+    public User create(User user) {
         user.setId(getNextId());
-        user.setFriends(new HashSet<>());
-        // сохраняем новую публикацию в памяти приложения
         users.put(user.getId(), user);
+        log.debug("Добавлен юзер с Id {}", user.getId());
         return user;
     }
 
     @Override
-    public User updateUser(@RequestBody User user) {
-        // проверяем необходимые условия
-        if (user.getId() == null) {
-            log.error("Empty User id");
-            throw new ValidationException("Id должен быть указан");
+    public Optional<User> getUserById(Long id) {
+        if (users.size() == 0) {
+            log.error("Ошибка при получении списка юзеров");
+            return Optional.empty();
         }
-        log.info("Request to update User by id {}", user.getId());
-        validation(user);
-        if (users.containsKey(user.getId())) {
-            User oldUser = users.get(user.getId());
-            oldUser.setName(user.getName());
-            oldUser.setBirthday(user.getBirthday());
-            oldUser.setLogin(user.getLogin());
-            oldUser.setEmail(user.getEmail());
-            return oldUser;
-        }
-        throw new NotFoundException("Пользователь с id = " + user.getId() + " не найден");
-    }
-
-    @Override
-    public void userAddFriend(Long userId, Long friendId) {
-
-    }
-
-    @Override
-    public void userDeleteFriend(Long userId, Long friendId) {
-
-    }
-
-    @Override
-    public List<User> getAllFriendByUserId(Long id) {
-        return List.of();
-    }
-
-    @Override
-    public User getUserById(Long id) {
         if (users.containsKey(id)) {
-            return users.get(id);
+            return Optional.of(users.get(id));
         }
-        throw new NotFoundException("Пользователь с id = " + id + " не найден");
+        log.error("Ошибка при получении списка юзеров");
+        return Optional.empty();
     }
 
-    private void validation(User user) throws ValidationException {
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.error("Empty User email");
-            throw new ValidationException("Имейл должен быть указан");
-        }
-        if (!user.getEmail().contains("@")) {
-            throw new ValidationException("Имейл должен содержать символ @");
-        }
-        if (user.getLogin() == null || user.getLogin().isBlank()) {
-            throw new ValidationException("Логин должен быть указан");
-        }
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может быть пустым и содержать пробелы");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
-        }
+    @Override
+    public Optional<List<User>> findAll() {
+        if (users.size() == 0) {
+            log.error("Ошибка при получении списка юзеров");
+            return Optional.empty();
+        } else return Optional.of((List<User>) users.values());
     }
 
-    // вспомогательный метод для генерации идентификатора нового поста
-    private Long getNextId() {
-        Long currentMaxId = users.keySet()
+    @Override
+    public User update(User newUser) {
+        User oldUser = users.get(newUser.getId());
+        if (newUser.getEmail() != null && !newUser.getEmail().isEmpty()) {
+            log.trace("Изменен имейл юзера с Id {}", newUser.getId());
+            oldUser.setEmail(newUser.getEmail());
+        }
+        if (newUser.getLogin() != null && !newUser.getLogin().isEmpty()) {
+            log.trace("Изменен логин юзера с Id {}", newUser.getId());
+            oldUser.setLogin(newUser.getLogin());
+        }
+        if (newUser.getName() != null && !newUser.getName().isEmpty()) {
+            log.trace("Изменено имя юзера с Id {}", newUser.getId());
+            oldUser.setName(newUser.getName());
+        }
+        if (newUser.getBirthday() != null && !newUser.getBirthday().isAfter(LocalDate.now())) {
+            log.trace("Изменена дата рождения юзера с Id {}", newUser.getId());
+            oldUser.setBirthday(newUser.getBirthday());
+        }
+        if (newUser.getFriends() != null) {
+            oldUser.setFriends(newUser.getFriends());
+        }
+        log.debug("Обновлен юзер с Id {}", newUser.getId());
+        return oldUser;
+    }
+
+    private long getNextId() {
+        long currentMaxId = users.keySet()
                 .stream()
                 .mapToLong(id -> id)
                 .max()
                 .orElse(0);
         return ++currentMaxId;
+    }
+
+    @Override
+    public void remove(Long id) {
+        users.remove(id);
+        log.debug("Пользователь с id = {} удален", id);
+    }
+
+    @Override
+    public Boolean isUserIdExists(Long id) {
+        return users.containsKey(id);
     }
 }
