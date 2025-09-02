@@ -3,7 +3,7 @@
 
 **Сервис на Spring Boot для управления фильмами, пользовательскими отзывами и персональными рекомендациями**
 
-**Технологии:** Java · Spring Boot · Maven · PostgreSQL · H2
+**Стек:** Java · Spring Boot · Maven · PostgreSQL · H2
 
 ---
 
