@@ -46,10 +46,10 @@ class FilmoRateApplicationTests {
 
     User user0 = User.builder()
             .id(Long.valueOf(23))
-            .email("some@mail.ru")
-            .login("somelogin")
-            .name("some name")
-            .birthday(LocalDate.of(2000, 12, 28))
+            .email("irem.ashfak@mail.ru")
+            .login("ashhirka")
+            .name("Irem")
+            .birthday(LocalDate.of(2002, 03, 05))
             .build();
 
     User user1 = User.builder()
